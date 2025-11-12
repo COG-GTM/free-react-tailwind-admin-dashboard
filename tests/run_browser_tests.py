@@ -87,6 +87,12 @@ def main():
     # Run Playwright test
     results['Playwright'] = run_test('tests/e2e/test_playwright.py', 'Playwright')
 
+    # Run Selenium Forms test
+    results['Selenium Forms'] = run_test('tests/e2e/test_selenium_forms.py', 'Selenium Forms')
+
+    # Run Playwright Calendar test
+    results['Playwright Calendar'] = run_test('tests/e2e/test_playwright_calendar.py', 'Playwright Calendar')
+
     # Summary
     print(f"\n{'='*50}")
     print("📊 TEST SUMMARY")
