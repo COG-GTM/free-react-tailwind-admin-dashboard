@@ -1,4 +1,21 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useReducer, useEffect } from "react";
+
+type SidebarState = {
+  isExpanded: boolean;
+  isMobileOpen: boolean;
+  isMobile: boolean;
+  isHovered: boolean;
+  activeItem: string | null;
+  openSubmenu: string | null;
+};
+
+type SidebarAction =
+  | { type: "TOGGLE_SIDEBAR" }
+  | { type: "TOGGLE_MOBILE_SIDEBAR" }
+  | { type: "SET_IS_HOVERED"; payload: boolean }
+  | { type: "SET_ACTIVE_ITEM"; payload: string | null }
+  | { type: "TOGGLE_SUBMENU"; payload: string }
+  | { type: "SET_IS_MOBILE"; payload: boolean };
 
 type SidebarContextType = {
   isExpanded: boolean;
@@ -13,6 +30,41 @@ type SidebarContextType = {
   toggleSubmenu: (item: string) => void;
 };
 
+const initialState: SidebarState = {
+  isExpanded: true,
+  isMobileOpen: false,
+  isMobile: false,
+  isHovered: false,
+  activeItem: null,
+  openSubmenu: null,
+};
+
+function sidebarReducer(state: SidebarState, action: SidebarAction): SidebarState {
+  switch (action.type) {
+    case "TOGGLE_SIDEBAR":
+      return { ...state, isExpanded: !state.isExpanded };
+    case "TOGGLE_MOBILE_SIDEBAR":
+      return { ...state, isMobileOpen: !state.isMobileOpen };
+    case "SET_IS_HOVERED":
+      return { ...state, isHovered: action.payload };
+    case "SET_ACTIVE_ITEM":
+      return { ...state, activeItem: action.payload };
+    case "TOGGLE_SUBMENU":
+      return {
+        ...state,
+        openSubmenu: state.openSubmenu === action.payload ? null : action.payload,
+      };
+    case "SET_IS_MOBILE":
+      return {
+        ...state,
+        isMobile: action.payload,
+        isMobileOpen: action.payload ? state.isMobileOpen : false,
+      };
+    default:
+      return state;
+  }
+}
+
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 export const useSidebar = () => {
@@ -26,20 +78,12 @@ export const useSidebar = () => {
 export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [activeItem, setActiveItem] = useState<string | null>(null);
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(sidebarReducer, initialState);
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setIsMobileOpen(false);
-      }
+      dispatch({ type: "SET_IS_MOBILE", payload: mobile });
     };
 
     handleResize();
@@ -51,25 +95,33 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const toggleSidebar = () => {
-    setIsExpanded((prev) => !prev);
+    dispatch({ type: "TOGGLE_SIDEBAR" });
   };
 
   const toggleMobileSidebar = () => {
-    setIsMobileOpen((prev) => !prev);
+    dispatch({ type: "TOGGLE_MOBILE_SIDEBAR" });
+  };
+
+  const setIsHovered = (isHovered: boolean) => {
+    dispatch({ type: "SET_IS_HOVERED", payload: isHovered });
+  };
+
+  const setActiveItem = (item: string | null) => {
+    dispatch({ type: "SET_ACTIVE_ITEM", payload: item });
   };
 
   const toggleSubmenu = (item: string) => {
-    setOpenSubmenu((prev) => (prev === item ? null : item));
+    dispatch({ type: "TOGGLE_SUBMENU", payload: item });
   };
 
   return (
     <SidebarContext.Provider
       value={{
-        isExpanded: isMobile ? false : isExpanded,
-        isMobileOpen,
-        isHovered,
-        activeItem,
-        openSubmenu,
+        isExpanded: state.isMobile ? false : state.isExpanded,
+        isMobileOpen: state.isMobileOpen,
+        isHovered: state.isHovered,
+        activeItem: state.activeItem,
+        openSubmenu: state.openSubmenu,
         toggleSidebar,
         toggleMobileSidebar,
         setIsHovered,
