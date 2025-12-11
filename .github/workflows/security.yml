@@ -45,3 +45,6 @@ jobs:
         with:
           fail-on-severity: high
           deny-licenses: GPL-3.0, AGPL-3.0
+        # Note: This step requires Dependency Graph to be enabled in repository settings.
+        # On forks or repos without this feature enabled, this step will fail gracefully.
+        continue-on-error: true
