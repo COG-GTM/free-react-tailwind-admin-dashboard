@@ -73,6 +73,9 @@ test.describe("Navigation", () => {
 
   test("should navigate to charts page", async ({ page }) => {
     await page.goto("/");
+    // First expand the Charts menu (it's a collapsible dropdown)
+    await page.getByRole("button", { name: /charts/i }).click();
+    // Then click the Line Chart link
     await page.click('a[href="/line-chart"]');
     await expect(page).toHaveURL(/line-chart/);
   });
@@ -93,6 +96,9 @@ test.describe("Authentication Pages", () => {
 test.describe("404 Page", () => {
   test("should display 404 page for unknown routes", async ({ page }) => {
     await page.goto("/unknown-route-that-does-not-exist");
-    await expect(page.locator("body")).toContainText(/404|not found/i);
+    // The 404 page shows "We can't seem to find the page you are looking for!"
+    await expect(page.locator("body")).toContainText(
+      /can.?t seem to find the page|404|not found/i
+    );
   });
 });
