@@ -61,12 +61,18 @@ test.describe("Responsive Design", () => {
 test.describe("Navigation", () => {
   test("should navigate to form elements page", async ({ page }) => {
     await page.goto("/");
+    // First expand the Forms menu (it's a collapsible dropdown)
+    await page.getByRole("button", { name: /forms/i }).click();
+    // Then click the Form Elements link
     await page.click('a[href="/form-elements"]');
     await expect(page).toHaveURL(/form-elements/);
   });
 
   test("should navigate to basic tables page", async ({ page }) => {
     await page.goto("/");
+    // First expand the Tables menu (it's a collapsible dropdown)
+    await page.getByRole("button", { name: /tables/i }).click();
+    // Then click the Basic Tables link
     await page.click('a[href="/basic-tables"]');
     await expect(page).toHaveURL(/basic-tables/);
   });
