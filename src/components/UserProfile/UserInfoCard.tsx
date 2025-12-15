@@ -107,7 +107,7 @@ export default function UserInfoCard() {
                   Social Links
                 </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
                   <div>
                     <Label>Facebook</Label>
                     <Input
@@ -140,7 +140,7 @@ export default function UserInfoCard() {
                   Personal Information
                 </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>First Name</Label>
                     <Input type="text" value="Musharof" />

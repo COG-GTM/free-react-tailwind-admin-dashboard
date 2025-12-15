@@ -545,7 +545,7 @@ span.flatpickr-weekday,
   @apply max-w-full overflow-x-auto custom-scrollbar;
 }
 .fc-dayGridMonth-view.fc-view.fc-daygrid {
-  @apply min-w-[718px];
+  @apply min-w-full sm:min-w-[718px];
 }
 .fc .fc-scrollgrid-section > * {
   border-right-width: 0;
