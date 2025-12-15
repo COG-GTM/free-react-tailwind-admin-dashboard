@@ -95,12 +95,37 @@ async def test_dashboard_with_playwright():
 
             # Test responsive design by changing viewport
             print("📱 Testing responsive design...")
+            
+            # Test tablet viewport (768x1024)
             await page.set_viewport_size({"width": 768, "height": 1024})
             await asyncio.sleep(1)
-
             mobile_screenshot_path = "tests/screenshots/playwright_mobile_screenshot.png"
             await page.screenshot(path=mobile_screenshot_path)
-            print(f"📸 Mobile screenshot saved to: {mobile_screenshot_path}")
+            print(f"📸 Tablet screenshot saved to: {mobile_screenshot_path}")
+
+            # Test small phones (375x667 - iPhone SE/8 size)
+            print("📱 Testing small phone viewport (375x667)...")
+            await page.set_viewport_size({"width": 375, "height": 667})
+            await asyncio.sleep(1)
+            small_phone_screenshot_path = "tests/screenshots/playwright_small_phone_screenshot.png"
+            await page.screenshot(path=small_phone_screenshot_path)
+            print(f"📸 Small phone screenshot saved to: {small_phone_screenshot_path}")
+
+            # Test large phones (414x896 - iPhone XR/11 size)
+            print("📱 Testing large phone viewport (414x896)...")
+            await page.set_viewport_size({"width": 414, "height": 896})
+            await asyncio.sleep(1)
+            large_phone_screenshot_path = "tests/screenshots/playwright_large_phone_screenshot.png"
+            await page.screenshot(path=large_phone_screenshot_path)
+            print(f"📸 Large phone screenshot saved to: {large_phone_screenshot_path}")
+
+            # Test tablets landscape (1024x768)
+            print("📱 Testing tablet landscape viewport (1024x768)...")
+            await page.set_viewport_size({"width": 1024, "height": 768})
+            await asyncio.sleep(1)
+            tablet_landscape_screenshot_path = "tests/screenshots/playwright_tablet_landscape_screenshot.png"
+            await page.screenshot(path=tablet_landscape_screenshot_path)
+            print(f"📸 Tablet landscape screenshot saved to: {tablet_landscape_screenshot_path}")
 
             # Test dark mode toggle if available
             try:

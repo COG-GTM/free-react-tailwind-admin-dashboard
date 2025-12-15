@@ -12,7 +12,8 @@ const AppHeader: React.FC = () => {
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
-    if (window.innerWidth >= 1024) {
+    const lgBreakpoint = 1024;
+    if (window.matchMedia(`(min-width: ${lgBreakpoint}px)`).matches) {
       toggleSidebar();
     } else {
       toggleMobileSidebar();
@@ -98,7 +99,7 @@ const AppHeader: React.FC = () => {
 
           <button
             onClick={toggleApplicationMenu}
-            className="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden"
+            className="flex items-center justify-center w-11 h-11 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden"
           >
             <svg
               width="24"
