@@ -16,7 +16,8 @@ const TestComponent = () => {
 describe('ThemeContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.clear();
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    (localStorage.setItem as jest.Mock).mockImplementation(() => {});
     document.documentElement.classList.remove('dark');
   });
 
@@ -147,11 +148,21 @@ describe('ThemeContext', () => {
       await act(async () => {
         fireEvent.click(screen.getByTestId('toggle-button'));
       });
+      
+      await act(async () => {
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
+      
       expect(screen.getByTestId('theme-value')).toHaveTextContent('dark');
       
       await act(async () => {
         fireEvent.click(screen.getByTestId('toggle-button'));
       });
+      
+      await act(async () => {
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
+      
       expect(screen.getByTestId('theme-value')).toHaveTextContent('light');
     });
   });

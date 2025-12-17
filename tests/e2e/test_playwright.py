@@ -432,7 +432,8 @@ class TestScreenshots:
 
 
 # Legacy function for backward compatibility with run_browser_tests.py
-async def test_dashboard_with_playwright():
+# Renamed to avoid pytest collection - use run_playwright_test() instead
+async def _legacy_dashboard_with_playwright():
     """Legacy async test function for backward compatibility."""
     from playwright.async_api import async_playwright
     
@@ -498,7 +499,7 @@ async def test_dashboard_with_playwright():
 
 def run_playwright_test():
     """Run Playwright tests (legacy compatibility function)."""
-    return asyncio.run(test_dashboard_with_playwright())
+    return asyncio.run(_legacy_dashboard_with_playwright())
 
 
 if __name__ == "__main__":
