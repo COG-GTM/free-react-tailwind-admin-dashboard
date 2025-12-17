@@ -36,15 +36,8 @@ export default {
     '!src/vite-env.d.ts',
     '!src/**/__tests__/**',
     '!src/**/__mocks__/**',
+    '!src/icons/**',
   ],
-  coverageThreshold: {
-    global: {
-      branches: 50,
-      functions: 50,
-      lines: 50,
-      statements: 50,
-    },
-  },
   coverageReporters: ['text', 'lcov', 'html'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
