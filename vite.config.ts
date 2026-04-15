@@ -15,4 +15,12 @@ export default defineConfig({
       },
     }),
   ],
+  optimizeDeps: {
+    include: ["@react-jvectormap/core", "@react-jvectormap/world"],
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
 });
