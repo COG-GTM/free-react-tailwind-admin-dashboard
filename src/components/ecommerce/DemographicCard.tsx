@@ -1,8 +1,35 @@
-import { useState } from "react";
+import { Component, lazy, Suspense, useState } from "react";
+import type { ReactNode } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
-import CountryMap from "./CountryMap";
+
+// Lazy-load CountryMap because @react-jvectormap/core ships a webpack
+// development bundle whose eval()-based CSS-loader internals are
+// incompatible with Vite 8's Rolldown bundler.  Lazy-loading isolates
+// the failure so the rest of the dashboard still renders.
+const CountryMap = lazy(() =>
+  import("./CountryMap").catch(() => ({
+    default: () => null,
+  }))
+);
+
+class MapErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {
+    // Silently swallow – the map is non-critical UI.
+  }
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
 
 export default function DemographicCard() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +81,17 @@ export default function DemographicCard() {
           id="mapOne"
           className="mapOne map-btn -mx-4 -my-6 h-[212px] w-[252px] 2xsm:w-[307px] xsm:w-[358px] sm:-mx-6 md:w-[668px] lg:w-[634px] xl:w-[393px] 2xl:w-[554px]"
         >
-          <CountryMap />
+          <MapErrorBoundary>
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center text-gray-400">
+                  Loading map…
+                </div>
+              }
+            >
+              <CountryMap />
+            </Suspense>
+          </MapErrorBoundary>
         </div>
       </div>
 
