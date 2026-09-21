@@ -131,6 +131,7 @@ const AppSidebar: React.FC = () => {
     });
 
     if (!submenuMatched) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs open submenu to the current route
       setOpenSubmenu(null);
     }
   }, [location, isActive]);
