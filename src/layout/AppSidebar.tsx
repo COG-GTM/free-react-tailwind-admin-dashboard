@@ -92,6 +92,21 @@ const othersItems: NavItem[] = [
   },
 ];
 
+const getActiveSubmenu = (
+  pathname: string
+): { type: "main" | "others"; index: number } | null => {
+  let activeSubmenu: { type: "main" | "others"; index: number } | null = null;
+  (["main", "others"] as const).forEach((menuType) => {
+    const items = menuType === "main" ? navItems : othersItems;
+    items.forEach((nav, index) => {
+      if (nav.subItems?.some((subItem) => subItem.path === pathname)) {
+        activeSubmenu = { type: menuType, index };
+      }
+    });
+  });
+  return activeSubmenu;
+};
+
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
@@ -99,7 +114,7 @@ const AppSidebar: React.FC = () => {
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
     index: number;
-  } | null>(null);
+  } | null>(() => getActiveSubmenu(location.pathname));
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
     {}
   );
@@ -111,29 +126,11 @@ const AppSidebar: React.FC = () => {
     [location.pathname]
   );
 
-  useEffect(() => {
-    let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
-      items.forEach((nav, index) => {
-        if (nav.subItems) {
-          nav.subItems.forEach((subItem) => {
-            if (isActive(subItem.path)) {
-              setOpenSubmenu({
-                type: menuType as "main" | "others",
-                index,
-              });
-              submenuMatched = true;
-            }
-          });
-        }
-      });
-    });
-
-    if (!submenuMatched) {
-      setOpenSubmenu(null);
-    }
-  }, [location, isActive]);
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  if (location.pathname !== prevPathname) {
+    setPrevPathname(location.pathname);
+    setOpenSubmenu(getActiveSubmenu(location.pathname));
+  }
 
   useEffect(() => {
     if (openSubmenu !== null) {
