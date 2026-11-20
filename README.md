@@ -38,6 +38,10 @@ control panels. It's built on:
 - [Next.js Version](https://github.com/TailAdmin/free-nextjs-admin-dashboard)
 - [Vue.js Version](https://github.com/TailAdmin/vue-tailwind-admin-dashboard)
 
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md) for how this fork is put together: app bootstrap, routing, layout and state, components, styling, build, and the COG-GTM browser test suite in `tests/`. The diagram is an editable Graphviz source, [docs/diagrams/architecture.dot](docs/diagrams/architecture.dot), rendered to [PNG](docs/diagrams/architecture.png) and [SVG](docs/diagrams/architecture.svg).
+
 ## Installation
 
 ### Prerequisites

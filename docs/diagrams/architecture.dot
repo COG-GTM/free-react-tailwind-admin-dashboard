@@ -1,0 +1,83 @@
+// Architecture of the TailAdmin React dashboard (COG-GTM fork).
+// Edit this file, then run docs/diagrams/render.sh to refresh the PNG and SVG.
+digraph architecture {
+  graph [rankdir=TB, fontname="DejaVu Sans", fontsize=18, labelloc=t, nodesep=0.35, ranksep=0.55,
+         label="free-react-tailwind-admin-dashboard: runtime and tooling", pad=0.3];
+  node  [shape=box, style="rounded,filled", fillcolor=white, fontname="DejaVu Sans", fontsize=15, margin="0.18,0.08"];
+  edge  [fontname="DejaVu Sans", fontsize=12, color="#555555"];
+
+  subgraph cluster_bootstrap {
+    label="Bootstrap (index.html → src/main.tsx)"; style="rounded,filled"; fillcolor="#eef4ff"; color="#7a9cd6";
+    html   [label="index.html\n<div id=\"root\">"];
+    main   [label="main.tsx\nStrictMode + global CSS\n(index.css, swiper, flatpickr)"];
+    theme  [label="ThemeProvider\nlight/dark, localStorage \"theme\""];
+    helmet [label="AppWrapper\n(react-helmet-async HelmetProvider)"];
+    { rank=same; theme; helmet; }
+  }
+
+  subgraph cluster_router {
+    label="Routing (src/App.tsx, react-router v7 BrowserRouter)"; style="rounded,filled"; fillcolor="#f2fbf2"; color="#77b077";
+    router [label="Routes + ScrollToTop"];
+    layout [label="AppLayout (14 routes)\nSidebarProvider · AppSidebar\nAppHeader · Backdrop · <Outlet>"];
+    auth   [label="/signin  /signup\nAuthPageLayout (no sidebar)"];
+    nf     [label="*  →  NotFound"];
+    { rank=same; layout; auth; nf; }
+  }
+
+  subgraph cluster_pages {
+    label="Pages (src/pages)"; style="rounded,filled"; fillcolor="#fff8ec"; color="#d6a85a";
+    home   [label="/  Dashboard Home\n(ecommerce widgets)"];
+    cal    [label="/calendar\nCalendar (FullCalendar)"];
+    prof   [label="/profile\nUserProfiles"];
+    forms  [label="/form-elements\nFormElements"];
+    tables [label="/basic-tables\nBasicTables"];
+    charts [label="/line-chart  /bar-chart"];
+    ui     [label="/alerts /avatars /badge\n/buttons /images /videos"];
+    blank  [label="/blank"];
+    { rank=same; home; cal; prof; forms; }
+    { rank=same; tables; charts; ui; blank; }
+  }
+
+  subgraph cluster_components {
+    label="Components (src/components, src/icons, src/hooks)"; style="rounded,filled"; fillcolor="#f6f0fb"; color="#a585c9";
+    ecom   [label="ecommerce/*\nmetrics, charts, CountryMap"];
+    formc  [label="form/*\ninputs, MultiSelect, DatePicker,\nDropZone"];
+    uic    [label="ui/*\nModal, Dropdown, Badge, Button,\nTable, Alert, Avatar, media"];
+    common [label="common/*\nPageMeta, ComponentCard,\nPageBreadCrumb, theme toggles"];
+    icons  [label="icons/index.ts\nSVG → React via vite-plugin-svgr"];
+    hooks  [label="hooks/useModal"];
+    { rank=same; ecom; formc; uic; common; }
+  }
+
+  subgraph cluster_libs {
+    label="Third-party UI libraries (static, in-memory demo data; no backend calls)"; style="rounded,filled"; fillcolor="#f4f4f4"; color="#999999";
+    apex  [label="ApexCharts\n(react-apexcharts)"];
+    fc    [label="FullCalendar"];
+    jvm   [label="@react-jvectormap"];
+    misc  [label="flatpickr · react-dropzone\nclsx · tailwind-merge"];
+    { rank=same; apex; fc; jvm; misc; }
+  }
+
+  subgraph cluster_tooling {
+    label="Build and test tooling"; style="rounded,filled"; fillcolor="#fdeeee"; color="#d07a7a";
+    vite  [label="Vite 6 dev server :5173\nnpm run dev"];
+    build [label="npm run build\ntsc -b → vite build → dist/"];
+    css   [label="Tailwind CSS v4\n(@tailwindcss/postcss, index.css @theme)"];
+    tests [label="tests/run_browser_tests.py\nSelenium + Playwright (Python)\n→ tests/screenshots/"];
+    { rank=same; vite; build; }
+    { rank=same; css; tests; }
+  }
+
+  html -> main -> theme -> helmet -> router;
+  router -> layout; router -> auth; router -> nf;
+  layout -> home; layout -> cal; layout -> prof; layout -> forms;
+  layout -> tables [style=dashed]; layout -> charts [style=dashed]; layout -> ui [style=dashed]; layout -> blank [style=dashed];
+  home -> tables [style=invis]; cal -> charts [style=invis]; prof -> ui [style=invis]; forms -> blank [style=invis];
+  home -> ecom; forms -> formc; prof -> uic; cal -> uic; tables -> uic; ui -> uic; charts -> common;
+  prof -> hooks; cal -> hooks;
+  ecom -> apex; ecom -> jvm; charts -> apex; cal -> fc; formc -> misc;
+  uic -> icons [style=dashed]; ecom -> hooks [style=invis];
+  apex -> vite [style=invis]; fc -> build [style=invis];
+  vite -> tests [label="drives headless Chrome", dir=back];
+  build -> css [label="CSS pipeline", dir=back, style=dashed];
+}
