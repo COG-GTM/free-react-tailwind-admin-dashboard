@@ -115,3 +115,6 @@ geckodriver*
 *.tmp
 *.temp
 .cache/
+
+# Architecture diagram renders (docs/diagrams/render.sh)
+!docs/diagrams/*.png
