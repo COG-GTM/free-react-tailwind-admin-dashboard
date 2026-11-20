@@ -54,7 +54,7 @@ docs/                   this document and its diagram
       <App />              router
 ```
 
-`main.tsx` also imports the global stylesheets: `src/index.css`, `swiper/swiper-bundle.css` and `flatpickr/dist/flatpickr.css`. `index.html` has no `<title>`; each page sets it with `PageMeta` (`src/components/common/PageMeta.tsx`), so the browser title comes from the page component that is rendered.
+`main.tsx` also imports the global stylesheets: `src/index.css`, `swiper/swiper-bundle.css` and `flatpickr/dist/flatpickr.css`. `index.html` has no `<title>`. Each page renders `PageMeta` (`src/components/common/PageMeta.tsx`), which sets `<title>` and `<meta name="description">` through `react-helmet-async`. In practice, with React 19 the title is set reliably only on a full page load: after client-side navigation the browser usually keeps the previous page's title.
 
 ## Routing
 
@@ -125,7 +125,7 @@ Every page sets its title with `PageMeta`; most `AppLayout` pages also render `P
 
 Icons are SVG files in `src/icons/`. `src/icons/index.ts` imports each one as `import { ReactComponent as XIcon } from "./x.svg?react"`; `vite-plugin-svgr` (configured in `vite.config.ts` with `exportType: "named"`) turns them into React components and `src/svg.d.ts` types the `?react` imports.
 
-All charts, tables, maps and lists use hard-coded sample data. The app makes no network requests apart from loading assets (and the Outfit font from Google Fonts, imported at the top of `index.css`).
+All charts, tables, maps and lists use hard-coded sample data. The app calls no APIs. The only external requests are the Outfit font from Google Fonts (imported at the top of `index.css`) and, on `/videos`, the YouTube `<iframe>` embeds in `components/ui/videos/`.
 
 ## Styling
 
